@@ -12,7 +12,7 @@ namespace CinemaService.Validators
                 .NotNull().WithMessage("Filme deve ser informado!");
 
             RuleFor(s => s.Data)
-                .Must(d => d > DateTime.Now)
+                .Must(d => d.ToUniversalTime() > DateTime.UtcNow)
                 .WithMessage("Data da sessão deve ser futura!");
 
             RuleFor(s => s.Sala)

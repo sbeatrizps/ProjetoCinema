@@ -2,7 +2,6 @@
 using CinemaDomain;
 using CinemaService.Base;
 using CinemaService.Validators;
-using System.Configuration;
 
 namespace CinemaApp.Cadastros
 {
@@ -12,7 +11,7 @@ namespace CinemaApp.Cadastros
         private List<Genero> _generos;
         public CadastroGenero(IBaseService<Genero> generoService)
         {
-            _generoService = generoService; 
+            _generoService = generoService;
             InitializeComponent();
         }
 
@@ -26,30 +25,40 @@ namespace CinemaApp.Cadastros
             txtNome.Text = genero.Nome;
         }
 
-        protected override void Salvar() {
-            try {
-                if (IsEditMode) {
+        protected override void Salvar()
+        {
+            try
+            {
+                if (IsEditMode)
+                {
                     var id = Convert.ToInt32(txtId.Text);
                     var genero = _generoService.ReadById<Genero>(id);
                     PreencheObjeto(genero);
                     _generoService.Update<Genero, Genero, GeneroValidator>(genero);
-                }else{
+                }
+                else
+                {
                     var genero = new Genero();
                     PreencheObjeto(genero);
                     _generoService.Create<Genero, Genero, GeneroValidator>(genero);
                 }
                 tabControlCadastro.SelectedIndex = 1;
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        protected override void Deletar(int id) {
-            try{
-                _generoService.Delete(id);            
-            }catch (Exception ex){
+        protected override void Deletar(int id)
+        {
+            try
+            {
+                _generoService.Delete(id);
+            }
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }            
+            }
         }
 
         protected override void CarregaGrid()

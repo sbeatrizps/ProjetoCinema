@@ -60,25 +60,28 @@
             gêneroToolStripMenuItem.Name = "gêneroToolStripMenuItem";
             gêneroToolStripMenuItem.Size = new Size(180, 22);
             gêneroToolStripMenuItem.Text = "Gênero";
-            gêneroToolStripMenuItem.Click += gêneroToolStripMenuItem_Click;
+            gêneroToolStripMenuItem.Click += generoToolStripMenuItem_Click;
             // 
             // filmeToolStripMenuItem
             // 
             filmeToolStripMenuItem.Name = "filmeToolStripMenuItem";
             filmeToolStripMenuItem.Size = new Size(180, 22);
             filmeToolStripMenuItem.Text = "Filme";
+            filmeToolStripMenuItem.Click += filmeToolStripMenuItem_Click;
             // 
             // salaToolStripMenuItem
             // 
             salaToolStripMenuItem.Name = "salaToolStripMenuItem";
             salaToolStripMenuItem.Size = new Size(180, 22);
             salaToolStripMenuItem.Text = "Sala";
+            salaToolStripMenuItem.Click += salaToolStripMenuItem_Click;
             // 
             // sessãoToolStripMenuItem
             // 
             sessãoToolStripMenuItem.Name = "sessãoToolStripMenuItem";
             sessãoToolStripMenuItem.Size = new Size(180, 22);
             sessãoToolStripMenuItem.Text = "Sessão";
+            sessãoToolStripMenuItem.Click += sessaoToolStripMenuItem_Click;
             // 
             // vendaToolStripMenuItem
             // 
@@ -92,6 +95,7 @@
             ingressoToolStripMenuItem.Name = "ingressoToolStripMenuItem";
             ingressoToolStripMenuItem.Size = new Size(118, 22);
             ingressoToolStripMenuItem.Text = "Ingresso";
+            ingressoToolStripMenuItem.Click += ingressoToolStripMenuItem_Click;
             // 
             // FormPrincipal
             // 

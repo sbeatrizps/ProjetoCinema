@@ -19,6 +19,7 @@ namespace CinemaRepository.Mapping
             builder.HasOne(x => x.Genero) // relacionamento com genero
                 .WithMany()
                 .IsRequired(true);
+            builder.Navigation(x => x.Genero).AutoInclude(); // sempre carrega o gênero junto
             builder.Property(x => x.Duracao)
                 .HasDefaultValue(120);
         }

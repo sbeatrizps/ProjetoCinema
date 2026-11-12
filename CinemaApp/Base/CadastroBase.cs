@@ -63,6 +63,11 @@ namespace CinemaApp.Base
         {
             CarregaGrid();
         }
+
+        private void dataGridViewConsulta_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            Editar();
+        }
         #endregion
 
         #region Métodos
@@ -94,8 +99,7 @@ namespace CinemaApp.Base
             }
             else
             {
-                MessageBox.Show("Selecione um registro para editar!", "Editar",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Selecione um registro para editar!", "Editar", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
         protected virtual void Deletar(int id)
@@ -107,7 +111,7 @@ namespace CinemaApp.Base
             throw new NotImplementedException();
         }
 
-        private void LimpaCampos()
+        protected virtual void LimpaCampos()
         {
             IsEditMode = false;
             foreach (var control in tabPageCadastro.Controls)
@@ -116,10 +120,15 @@ namespace CinemaApp.Base
                     ((MaterialTextBoxEdit)control).Clear();
                 if (control is MaterialMaskedTextBox)
                     ((MaterialMaskedTextBox)control).Clear();
+                if (control is ComboBox)
+                    ((ComboBox)control).SelectedIndex = -1;
+                if (control is NumericUpDown)
+                    ((NumericUpDown)control).Value = ((NumericUpDown)control).Minimum;
+                if (control is System.Windows.Forms.CheckBox)
+                    ((System.Windows.Forms.CheckBox)control).Checked = false;
             }
         }
         #endregion
 
-        
     }
 }

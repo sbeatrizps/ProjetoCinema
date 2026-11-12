@@ -11,8 +11,12 @@ namespace CinemaRepository.Mapping
             builder.ToTable("Sessao");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Data);
-            builder.HasOne(x => x.Sala);            
+            builder.HasOne(x => x.Filme);
+            builder.HasOne(x => x.Sala);
             builder.Property(x => x.Preco);
+            // sempre carrega filme e sala junto com a sessão
+            builder.Navigation(x => x.Filme).AutoInclude();
+            builder.Navigation(x => x.Sala).AutoInclude();
 
         }
     }

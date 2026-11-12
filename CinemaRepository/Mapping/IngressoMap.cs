@@ -15,6 +15,9 @@ namespace CinemaRepository.Mapping
             builder.Property(x => x.ValorTotal);
             builder.Property(x => x.FormaPagamento).HasMaxLength(100);
             builder.HasMany(x => x.IngressoItens).WithOne(x=>x.Ingresso).OnDelete(DeleteBehavior.Cascade);
+            // sempre carrega a sessão e os itens (assentos) junto com o ingresso
+            builder.Navigation(x => x.Sessao).AutoInclude();
+            builder.Navigation(x => x.IngressoItens).AutoInclude();
         }
     }
 

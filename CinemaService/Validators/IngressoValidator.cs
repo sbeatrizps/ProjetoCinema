@@ -14,7 +14,7 @@ namespace CinemaService.Validators
                 .Length(11, 20).WithMessage("Documento deve conter entre 11 e 20 caracteres!");
 
             RuleFor(i => i.DataCompra)
-                .LessThanOrEqualTo(DateTime.Now).WithMessage("Data de compra não pode ser futura!");
+                .Must(d => d.ToUniversalTime() <= DateTime.UtcNow).WithMessage("Data de compra não pode ser futura!");
 
             RuleFor(i => i.IngressoItens)
                 .NotNull().WithMessage("Itens do ingresso devem ser informados!")

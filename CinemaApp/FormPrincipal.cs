@@ -12,12 +12,52 @@ namespace CinemaApp
             InitializeComponent();
         }
 
-        private void gêneroToolStripMenuItem_Click(object sender, EventArgs e)
+        private void FormPrincipal_FormClosing(object sender, FormClosingEventArgs e)
         {
-            CadastroGenero cadastroGenero = ConfigureDI.ServiceProvider.GetService<CadastroGenero>();
-            cadastroGenero.MdiParent = this;
-            cadastroGenero.Show();
+            if (e.CloseReason == CloseReason.ApplicationExitCall)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void ExibeFormulario<TFormulario>() where TFormulario : MaterialForm
+        {
+            var cad = ConfigureDI.ServiceProvider!.GetService<TFormulario>();
+            if (cad != null && !cad.IsDisposed)
+            {
+                cad.MdiParent = this;
+                cad.Show();
+            }
+            else
+            {
+                MessageBox.Show($"Não foi possível abrir o formulário {typeof(TFormulario).Name}.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void generoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExibeFormulario<CadastroGenero>();
+        }
+
+        private void filmeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExibeFormulario<CadastroFilme>();
 
         }
+
+        private void salaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExibeFormulario<CadastroSala>();
+        }
+
+        private void sessaoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExibeFormulario<CadastroSessao>();
+        }
+
+        private void ingressoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExibeFormulario<CadastroIngresso>();
+        }
+
     }
 }
