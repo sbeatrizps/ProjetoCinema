@@ -1,0 +1,326 @@
+﻿namespace CinemaApp.Base
+{
+    partial class CadastroBase
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CadastroBase));
+            tabControlCadastro = new ReaLTaiizor.Controls.MaterialTabControl();
+            tabPageCadastro = new TabPage();
+            txtId = new ReaLTaiizor.Controls.MaterialTextBoxEdit();
+            panel1 = new Panel();
+            btnSalvar = new ReaLTaiizor.Controls.MaterialButton();
+            btnCancelar = new ReaLTaiizor.Controls.MaterialButton();
+            tabPageConsulta = new TabPage();
+            panel2 = new Panel();
+            btnExcluir = new ReaLTaiizor.Controls.MaterialButton();
+            btnEditar = new ReaLTaiizor.Controls.MaterialButton();
+            btnNovo = new ReaLTaiizor.Controls.MaterialButton();
+            dataGridViewConsulta = new DataGridView();
+            imageListMenu = new ImageList(components);
+            tabControlCadastro.SuspendLayout();
+            tabPageCadastro.SuspendLayout();
+            panel1.SuspendLayout();
+            tabPageConsulta.SuspendLayout();
+            panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewConsulta).BeginInit();
+            SuspendLayout();
+            // 
+            // tabControlCadastro
+            // 
+            tabControlCadastro.Controls.Add(tabPageCadastro);
+            tabControlCadastro.Controls.Add(tabPageConsulta);
+            tabControlCadastro.Depth = 0;
+            tabControlCadastro.Dock = DockStyle.Fill;
+            tabControlCadastro.ImageList = imageListMenu;
+            tabControlCadastro.Location = new Point(3, 78);
+            tabControlCadastro.Margin = new Padding(3, 4, 3, 4);
+            tabControlCadastro.MouseState = ReaLTaiizor.Helper.MaterialDrawHelper.MaterialMouseState.HOVER;
+            tabControlCadastro.Multiline = true;
+            tabControlCadastro.Name = "tabControlCadastro";
+            tabControlCadastro.SelectedIndex = 0;
+            tabControlCadastro.Size = new Size(565, 451);
+            tabControlCadastro.TabIndex = 0;
+            // 
+            // tabPageCadastro
+            // 
+            tabPageCadastro.Controls.Add(txtId);
+            tabPageCadastro.Controls.Add(panel1);
+            tabPageCadastro.ImageKey = "register.png";
+            tabPageCadastro.Location = new Point(4, 29);
+            tabPageCadastro.Margin = new Padding(3, 4, 3, 4);
+            tabPageCadastro.Name = "tabPageCadastro";
+            tabPageCadastro.Padding = new Padding(3, 4, 3, 4);
+            tabPageCadastro.Size = new Size(557, 418);
+            tabPageCadastro.TabIndex = 0;
+            tabPageCadastro.Text = "Cadastro";
+            tabPageCadastro.UseVisualStyleBackColor = true;
+            // 
+            // txtId
+            // 
+            txtId.AnimateReadOnly = false;
+            txtId.AutoCompleteMode = AutoCompleteMode.None;
+            txtId.AutoCompleteSource = AutoCompleteSource.None;
+            txtId.BackgroundImageLayout = ImageLayout.None;
+            txtId.CharacterCasing = CharacterCasing.Normal;
+            txtId.Depth = 0;
+            txtId.Font = new Font("Microsoft Sans Serif", 16F, FontStyle.Regular, GraphicsUnit.Pixel);
+            txtId.HideSelection = true;
+            txtId.Hint = "Id";
+            txtId.LeadingIcon = null;
+            txtId.Location = new Point(21, 21);
+            txtId.Margin = new Padding(3, 4, 3, 4);
+            txtId.MaxLength = 32767;
+            txtId.MouseState = ReaLTaiizor.Helper.MaterialDrawHelper.MaterialMouseState.OUT;
+            txtId.Name = "txtId";
+            txtId.PasswordChar = '\0';
+            txtId.PrefixSuffixText = null;
+            txtId.ReadOnly = true;
+            txtId.RightToLeft = RightToLeft.No;
+            txtId.SelectedText = "";
+            txtId.SelectionLength = 0;
+            txtId.SelectionStart = 0;
+            txtId.ShortcutsEnabled = true;
+            txtId.Size = new Size(89, 60);
+            txtId.TabIndex = 3;
+            txtId.TabStop = false;
+            txtId.TextAlign = HorizontalAlignment.Left;
+            txtId.TrailingIcon = null;
+            txtId.UseSystemPasswordChar = false;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnSalvar);
+            panel1.Controls.Add(btnCancelar);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(3, 346);
+            panel1.Margin = new Padding(3, 4, 3, 4);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(551, 68);
+            panel1.TabIndex = 2;
+            // 
+            // btnSalvar
+            // 
+            btnSalvar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnSalvar.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnSalvar.Density = ReaLTaiizor.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnSalvar.Depth = 0;
+            btnSalvar.HighEmphasis = true;
+            btnSalvar.Icon = null;
+            btnSalvar.IconType = ReaLTaiizor.Controls.MaterialButton.MaterialIconType.Rebase;
+            btnSalvar.Location = new Point(444, 15);
+            btnSalvar.Margin = new Padding(5, 8, 5, 8);
+            btnSalvar.MouseState = ReaLTaiizor.Helper.MaterialDrawHelper.MaterialMouseState.HOVER;
+            btnSalvar.Name = "btnSalvar";
+            btnSalvar.NoAccentTextColor = Color.Empty;
+            btnSalvar.Size = new Size(91, 45);
+            btnSalvar.TabIndex = 3;
+            btnSalvar.Text = "Salvar";
+            btnSalvar.Type = ReaLTaiizor.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnSalvar.UseAccentColor = false;
+            btnSalvar.UseVisualStyleBackColor = true;
+            btnSalvar.Click += btnSalvar_Click;
+            // 
+            // btnCancelar
+            // 
+            btnCancelar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancelar.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnCancelar.Density = ReaLTaiizor.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnCancelar.Depth = 0;
+            btnCancelar.HighEmphasis = true;
+            btnCancelar.Icon = null;
+            btnCancelar.IconType = ReaLTaiizor.Controls.MaterialButton.MaterialIconType.Rebase;
+            btnCancelar.Location = new Point(323, 15);
+            btnCancelar.Margin = new Padding(5, 8, 5, 8);
+            btnCancelar.MouseState = ReaLTaiizor.Helper.MaterialDrawHelper.MaterialMouseState.HOVER;
+            btnCancelar.Name = "btnCancelar";
+            btnCancelar.NoAccentTextColor = Color.Empty;
+            btnCancelar.Size = new Size(116, 45);
+            btnCancelar.TabIndex = 2;
+            btnCancelar.Text = "Cancelar";
+            btnCancelar.Type = ReaLTaiizor.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnCancelar.UseAccentColor = false;
+            btnCancelar.UseVisualStyleBackColor = true;
+            btnCancelar.Click += btnCancelar_Click;
+            // 
+            // tabPageConsulta
+            // 
+            tabPageConsulta.Controls.Add(panel2);
+            tabPageConsulta.Controls.Add(dataGridViewConsulta);
+            tabPageConsulta.ImageKey = "find.png";
+            tabPageConsulta.Location = new Point(4, 29);
+            tabPageConsulta.Margin = new Padding(3, 4, 3, 4);
+            tabPageConsulta.Name = "tabPageConsulta";
+            tabPageConsulta.Padding = new Padding(3, 4, 3, 4);
+            tabPageConsulta.Size = new Size(557, 418);
+            tabPageConsulta.TabIndex = 1;
+            tabPageConsulta.Text = "Consulta";
+            tabPageConsulta.UseVisualStyleBackColor = true;
+            tabPageConsulta.Enter += tabPageConsulta_Enter;
+            // 
+            // panel2
+            // 
+            panel2.Controls.Add(btnExcluir);
+            panel2.Controls.Add(btnEditar);
+            panel2.Controls.Add(btnNovo);
+            panel2.Dock = DockStyle.Bottom;
+            panel2.Location = new Point(3, 351);
+            panel2.Margin = new Padding(3, 4, 3, 4);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(551, 63);
+            panel2.TabIndex = 6;
+            // 
+            // btnExcluir
+            // 
+            btnExcluir.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnExcluir.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnExcluir.Density = ReaLTaiizor.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnExcluir.Depth = 0;
+            btnExcluir.HighEmphasis = true;
+            btnExcluir.Icon = null;
+            btnExcluir.IconType = ReaLTaiizor.Controls.MaterialButton.MaterialIconType.Rebase;
+            btnExcluir.Location = new Point(450, 14);
+            btnExcluir.Margin = new Padding(5, 8, 5, 8);
+            btnExcluir.MouseState = ReaLTaiizor.Helper.MaterialDrawHelper.MaterialMouseState.HOVER;
+            btnExcluir.Name = "btnExcluir";
+            btnExcluir.NoAccentTextColor = Color.Empty;
+            btnExcluir.Size = new Size(96, 45);
+            btnExcluir.TabIndex = 7;
+            btnExcluir.Text = "Excluir";
+            btnExcluir.Type = ReaLTaiizor.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnExcluir.UseAccentColor = false;
+            btnExcluir.UseVisualStyleBackColor = true;
+            btnExcluir.Click += btnExcluir_Click;
+            // 
+            // btnEditar
+            // 
+            btnEditar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnEditar.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnEditar.Density = ReaLTaiizor.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnEditar.Depth = 0;
+            btnEditar.HighEmphasis = true;
+            btnEditar.Icon = null;
+            btnEditar.IconType = ReaLTaiizor.Controls.MaterialButton.MaterialIconType.Rebase;
+            btnEditar.Location = new Point(360, 14);
+            btnEditar.Margin = new Padding(5, 8, 5, 8);
+            btnEditar.MouseState = ReaLTaiizor.Helper.MaterialDrawHelper.MaterialMouseState.HOVER;
+            btnEditar.Name = "btnEditar";
+            btnEditar.NoAccentTextColor = Color.Empty;
+            btnEditar.Size = new Size(85, 45);
+            btnEditar.TabIndex = 6;
+            btnEditar.Text = "Editar";
+            btnEditar.Type = ReaLTaiizor.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnEditar.UseAccentColor = false;
+            btnEditar.UseVisualStyleBackColor = true;
+            btnEditar.Click += btnEditar_Click;
+            // 
+            // btnNovo
+            // 
+            btnNovo.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnNovo.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnNovo.Density = ReaLTaiizor.Controls.MaterialButton.MaterialButtonDensity.Default;
+            btnNovo.Depth = 0;
+            btnNovo.HighEmphasis = true;
+            btnNovo.Icon = null;
+            btnNovo.IconType = ReaLTaiizor.Controls.MaterialButton.MaterialIconType.Rebase;
+            btnNovo.Location = new Point(275, 14);
+            btnNovo.Margin = new Padding(5, 8, 5, 8);
+            btnNovo.MouseState = ReaLTaiizor.Helper.MaterialDrawHelper.MaterialMouseState.HOVER;
+            btnNovo.Name = "btnNovo";
+            btnNovo.NoAccentTextColor = Color.Empty;
+            btnNovo.Size = new Size(80, 45);
+            btnNovo.TabIndex = 5;
+            btnNovo.Text = "Novo";
+            btnNovo.Type = ReaLTaiizor.Controls.MaterialButton.MaterialButtonType.Contained;
+            btnNovo.UseAccentColor = false;
+            btnNovo.UseVisualStyleBackColor = true;
+            btnNovo.Click += btnNovo_Click;
+            // 
+            // dataGridViewConsulta
+            // 
+            dataGridViewConsulta.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewConsulta.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewConsulta.Location = new Point(7, 8);
+            dataGridViewConsulta.Margin = new Padding(3, 4, 3, 4);
+            dataGridViewConsulta.Name = "dataGridViewConsulta";
+            dataGridViewConsulta.ReadOnly = true;
+            dataGridViewConsulta.RowHeadersWidth = 51;
+            dataGridViewConsulta.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewConsulta.Size = new Size(542, 345);
+            dataGridViewConsulta.TabIndex = 5;
+            dataGridViewConsulta.MouseDoubleClick += dataGridViewConsulta_MouseDoubleClick;
+            // 
+            // imageListMenu
+            // 
+            imageListMenu.ColorDepth = ColorDepth.Depth32Bit;
+            imageListMenu.ImageStream = (ImageListStreamer)resources.GetObject("imageListMenu.ImageStream");
+            imageListMenu.TransparentColor = Color.Transparent;
+            imageListMenu.Images.SetKeyName(0, "find.png");
+            imageListMenu.Images.SetKeyName(1, "register.png");
+            // 
+            // CadastroBase
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(571, 533);
+            Controls.Add(tabControlCadastro);
+            DrawerTabControl = tabControlCadastro;
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(3, 4, 3, 4);
+            MinimumSize = new Size(571, 533);
+            Name = "CadastroBase";
+            Padding = new Padding(3, 78, 3, 4);
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "CadastroBase";
+            tabControlCadastro.ResumeLayout(false);
+            tabPageCadastro.ResumeLayout(false);
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            tabPageConsulta.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewConsulta).EndInit();
+            ResumeLayout(false);
+        }
+
+        #endregion
+        private TabPage tabPageConsulta;
+        private ImageList imageListMenu;
+        protected TabPage tabPageCadastro;
+        protected ReaLTaiizor.Controls.MaterialTabControl tabControlCadastro;
+        protected DataGridView dataGridViewConsulta;
+        private Panel panel1;
+        private Panel panel2;
+        private ReaLTaiizor.Controls.MaterialButton btnExcluir;
+        private ReaLTaiizor.Controls.MaterialButton btnEditar;
+        private ReaLTaiizor.Controls.MaterialButton btnNovo;
+        private ReaLTaiizor.Controls.MaterialButton btnSalvar;
+        private ReaLTaiizor.Controls.MaterialButton btnCancelar;
+        protected ReaLTaiizor.Controls.MaterialTextBoxEdit txtId;
+    }
+}

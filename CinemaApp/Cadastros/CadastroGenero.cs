@@ -1,0 +1,85 @@
+﻿using CinemaApp.Base;
+using CinemaDomain;
+using CinemaService.Base;
+using CinemaService.Validators;
+
+namespace CinemaApp.Cadastros
+{
+    public partial class CadastroGenero : CadastroBase
+    {
+        private readonly IBaseService<Genero> _generoService;
+        private List<Genero> _generos = new();
+
+        public CadastroGenero(IBaseService<Genero> generoService)
+        {
+            _generoService = generoService;
+            InitializeComponent();
+        }
+
+        private void PreencheObjeto(Genero genero)
+        {
+            genero.Nome = txtNome.Text;
+        }
+
+        private void PreencheTela(Genero genero)
+        {
+            txtNome.Text = genero.Nome;
+        }
+
+        protected override void Salvar()
+        {
+            try
+            {
+                if (IsEditMode)
+                {
+                    var id = Convert.ToInt32(txtId.Text);
+                    var genero = _generoService.ReadById<Genero>(id);
+                    PreencheObjeto(genero);
+                    _generoService.Update<Genero, Genero, GeneroValidator>(genero);
+                }
+                else
+                {
+                    var genero = new Genero();
+                    PreencheObjeto(genero);
+                    _generoService.Create<Genero, Genero, GeneroValidator>(genero);
+                }
+
+                tabControlCadastro.SelectedIndex = 1;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        protected override void Deletar(int id)
+        {
+            try
+            {
+                _generoService.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        protected override void CarregaGrid()
+        {
+            _generos = _generoService.ReadAll<Genero>().ToList();
+            dataGridViewConsulta.DataSource = _generos;
+            var colunaNome = dataGridViewConsulta.Columns[nameof(Genero.Nome)];
+            if (colunaNome is not null)
+                colunaNome.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        }
+
+        protected override void CarregarRegistro(DataGridViewRow row)
+        {
+            var id = Convert.ToInt32(row.Cells[nameof(Genero.Id)].Value);
+            var genero = _generoService.ReadById<Genero>(id);
+
+            txtId.Text = genero.Id.ToString();
+            PreencheTela(genero);
+        }
+    }
+}

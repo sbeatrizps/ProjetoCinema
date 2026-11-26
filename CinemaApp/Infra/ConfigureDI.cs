@@ -1,0 +1,88 @@
+﻿using CinemaApp.Cadastros;
+using CinemaApp.Models;
+using CinemaDomain;
+using AutoMapper;
+using CinemaRepository.Base;
+using CinemaRepository.Context;
+using CinemaService.Base;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+
+namespace CinemaApp.Infra
+{
+    public static class ConfigureDI
+    {
+        public static ServiceCollection Services { get; private set; } = new();
+        public static IServiceProvider ServiceProvider { get; private set; } = null!;
+        public static void Configure()
+        {
+            Services = new ServiceCollection();
+            
+            #region Banco de Dados Injeção de Dependência            
+            var caminhoConfig = Path.Combine(AppContext.BaseDirectory, "Config", "ConfigDB.txt");
+            var strCon = File.ReadAllText(caminhoConfig).Trim();
+            Services.AddDbContext<MyDBContext>(options => options.UseNpgsql(strCon));
+            #endregion
+
+            #region Repositórios Injeção de Dependência
+            Services.AddScoped<IBaseRepository<Genero>, BaseRepository<Genero>>();
+            Services.AddScoped<IBaseRepository<Filme>, BaseRepository<Filme>>();
+            Services.AddScoped<IBaseRepository<Sala>, BaseRepository<Sala>>();
+            Services.AddScoped<IBaseRepository<Sessao>, BaseRepository<Sessao>>();
+            Services.AddScoped<IBaseRepository<Ingresso>, BaseRepository<Ingresso>>();
+            #endregion
+
+            #region Serviços Injeção de Dependência
+            Services.AddScoped<IBaseService<Genero>, BaseService<Genero>>();
+            Services.AddScoped<IBaseService<Filme>, BaseService<Filme>>();
+            Services.AddScoped<IBaseService<Sala>, BaseService<Sala>>();
+            Services.AddScoped<IBaseService<Sessao>, BaseService<Sessao>>();
+            Services.AddScoped<IBaseService<Ingresso>, BaseService<Ingresso>>();
+            #endregion
+
+            #region AutoMapper Injeção de Dependência
+            var mapperConfig = new MapperConfiguration(config =>
+            {
+                config.CreateMap<Genero, GeneroViewModel>().ReverseMap();
+                
+                config.CreateMap<Filme, FilmeViewModel>()
+                    .ForMember(dest => dest.GeneroId, opt => opt.MapFrom(src => src.Genero.Id))
+                    .ForMember(dest => dest.GeneroNome, opt => opt.MapFrom(src => src.Genero.Nome))
+                    .ReverseMap();
+                
+                config.CreateMap<Sala, SalaViewModel>().ReverseMap();
+                
+                config.CreateMap<Sessao, SessaoViewModel>()
+                    .ForMember(dest => dest.FilmeId, opt => opt.MapFrom(src => src.Filme.Id))
+                    .ForMember(dest => dest.FilmeNome, opt => opt.MapFrom(src => src.Filme.Nome))
+                    .ForMember(dest => dest.SalaId, opt => opt.MapFrom(src => src.Sala.Id))
+                    .ForMember(dest => dest.Classificacao, opt => opt.MapFrom(src => src.Filme.Classificacao))
+                    .ReverseMap();
+                    
+
+                config.CreateMap<Ingresso, IngressoViewModel>()
+                    .ForMember(dest => dest.Filme, opt => opt.MapFrom(src => src.Sessao.Filme.Nome))
+                    .ForMember(dest => dest.Classificacao, opt => opt.MapFrom(src => src.Sessao.Filme.Classificacao))
+                    .ReverseMap();
+                
+                config.CreateMap<IngressoItem, IngressoItemViewModel>().ReverseMap();
+
+            },NullLoggerFactory.Instance);
+
+            Services.AddSingleton(mapperConfig.CreateMapper());
+
+            #endregion
+
+            #region Injeção de Dependência de Formulários
+            Services.AddTransient<CadastroGenero>();
+            Services.AddTransient<CadastroFilme>();
+            Services.AddTransient<CadastroSala>();
+            Services.AddTransient<CadastroSessao>();
+            Services.AddTransient<CadastroIngresso>();
+            #endregion
+
+            ServiceProvider = Services.BuildServiceProvider();
+        }
+    }
+}

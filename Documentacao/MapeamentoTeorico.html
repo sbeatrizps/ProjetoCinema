@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>ProjetoCinema — Mapeamento entre o Código e os Temas de Referência</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "Segoe UI", Calibri, Arial, sans-serif; font-size: 10.5pt; color: #1b1b1f; line-height: 1.45; }
+  h1 { font-size: 20pt; margin: 0 0 4px; color: #11304f; }
+  h2 { font-size: 13.5pt; color: #11304f; border-bottom: 2px solid #c8d6e3; padding-bottom: 3px; margin-top: 22px; page-break-after: avoid; }
+  h3 { font-size: 11.5pt; color: #1f4e79; margin: 14px 0 4px; page-break-after: avoid; }
+  .sub { color: #5b6673; font-size: 10pt; margin-bottom: 2px; }
+  .ref { font-size: 8.8pt; color: #5b6673; font-style: italic; margin: 0 0 8px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 9.2pt; }
+  th { background: #11304f; color: #fff; text-align: left; padding: 5px 7px; font-weight: 600; }
+  td { border-bottom: 1px solid #dfe5ec; padding: 5px 7px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f6f9fc; }
+  code, .path { font-family: Consolas, "Courier New", monospace; font-size: 8.8pt; background: #eef3f8; padding: 1px 3px; border-radius: 2px; }
+  pre { background: #f6f9fc; border-left: 3px solid #1f4e79; padding: 7px 9px; font-family: Consolas, monospace; font-size: 8.5pt; overflow: hidden; margin: 6px 0; white-space: pre-wrap; }
+  ul { margin: 4px 0 8px; padding-left: 20px; }
+  li { margin-bottom: 3px; }
+  .box { background: #f1f6fb; border: 1px solid #c8d6e3; padding: 8px 11px; margin: 10px 0; border-radius: 3px; }
+  .tag { display: inline-block; background: #1f4e79; color: #fff; font-size: 7.8pt; padding: 1px 6px; border-radius: 9px; margin-right: 4px; }
+  .capa { text-align: center; padding-top: 55mm; page-break-after: always; }
+  .capa h1 { font-size: 26pt; border: none; }
+  .capa .linha { width: 70mm; height: 3px; background: #1f4e79; margin: 14px auto 18px; }
+  footer { color: #8a95a1; font-size: 8pt; text-align: center; margin-top: 18px; }
+  .nowrap { white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <div class="sub">Instituto Federal de São Paulo — Programação Orientada a Objetos / .NET</div>
+  <h1>ProjetoCinema</h1>
+  <div class="linha"></div>
+  <h2 style="border:none; color:#1f4e79; font-size:14pt;">Mapeamento entre o Código-Fonte e os Temas das Referências</h2>
+  <p class="sub" style="margin-top:28px;">
+    Domain-Driven Design &middot; ORM e Entity Framework Core<br>
+    Tipos Genéricos em C# &middot; Injeção de Dependência em .NET
+  </p>
+  <p class="sub" style="margin-top:40px;">Solução: <code>Cinema.slnx</code> — 5 projetos<br>
+  CinemaDomain &middot; CinemaRepository &middot; CinemaService &middot; CinemaApp &middot; CinemaTest</p>
+  <p class="sub" style="margin-top:35px;">25 de novembro de 2026</p>
+</div>
+
+<h1>1. Visão geral da solução</h1>
+<p>O <strong>ProjetoCinema</strong> é uma aplicação Windows Forms (.NET 10) para gestão de um cinema: cadastro de gêneros, filmes, salas, sessões e venda de ingressos com seleção de assentos. A solução está dividida em cinco projetos, e essa divisão não é arbitrária — ela reproduz, camada por camada, exatamente a <em>Layered Architecture</em> descrita por Eric Evans e o padrão de separação defendido no artigo de DDD em .NET da DevMedia.</p>
+
+<table>
+  <tr><th style="width:21%">Projeto / Pasta</th><th style="width:21%">Papel na arquitetura</th><th>Tema das referências ao qual corresponde</th></tr>
+  <tr><td><code>CinemaDomain</code></td><td>Domain Layer</td><td>DDD — Entidades, Modelo de Domínio, Camada de Domínio isolada (Evans, cap. 4 e 5; DevMedia)</td></tr>
+  <tr><td><code>CinemaRepository</code></td><td>Infrastructure Layer / Persistência</td><td>DDD — padrão <em>Repository</em>; ORM e Entity Framework Core (DbContext, Fluent API, Migrations)</td></tr>
+  <tr><td><code>CinemaService</code></td><td>Application / Service Layer</td><td>DDD — <em>Application Layer</em> e <em>Services</em>; Tipos Genéricos avançados; validação de invariantes</td></tr>
+  <tr><td><code>CinemaApp</code></td><td>Presentation Layer (UI)</td><td>DDD — <em>User Interface Layer</em>, DTO/ViewModel; Injeção de Dependência (contêiner, ciclos de vida)</td></tr>
+  <tr><td><code>CinemaTest</code></td><td>Testes</td><td>Verificação das camadas + EF Core Migrations + composição manual do contêiner de DI</td></tr>
+</table>
+
+<div class="box">
+<strong>Dependências entre projetos (lidas dos arquivos <code>.csproj</code>):</strong><br>
+<code>CinemaApp</code> → <code>CinemaService</code> → <code>CinemaRepository</code> → <code>CinemaDomain</code><br>
+Observe que as flechas apontam todas <em>para dentro</em>: o <code>CinemaDomain</code> não referencia nenhum outro projeto. Esse é o critério prático do DDD de que o domínio não deve conhecer infraestrutura nem interface — o <em>Domain Layer</em> permanece puro.
+</div>
+
+<h1>2. Tema: Domain-Driven Design</h1>
+<p class="ref">Referências: DevMedia — “Introdução ao DDD em .NET” (devmedia.com.br/introducao-ao-ddd-em-net/32724); Eric Evans — <em>Domain-Driven Design: Tackling Complexity in the Heart of Software</em> (2003).</p>
+
+<h3>2.1 Linguagem Ubíqua (Ubiquitous Language) — Evans, cap. 2</h3>
+<p>Evans defende que o código fale o mesmo idioma dos especialistas do domínio. No projeto isso aparece de forma literal: todas as classes, propriedades e pastas usam os termos do negócio em português, como seriam ditos por um funcionário do cinema.</p>
+<table>
+  <tr><th style="width:30%">Termo do negócio</th><th>Onde aparece no código</th></tr>
+  <tr><td>Filme, Gênero, Sala, Sessão</td><td><span class="path">CinemaDomain/Filme.cs</span>, <span class="path">Genero.cs</span>, <span class="path">Sala.cs</span>, <span class="path">Sessao.cs</span></td></tr>
+  <tr><td>Ingresso, Item do Ingresso</td><td><span class="path">CinemaDomain/Ingresso.cs</span>, <span class="path">IngressoItem.cs</span></td></tr>
+  <tr><td>Classificação, Duração, Forma de Pagamento</td><td>Propriedades <code>Classificacao</code>, <code>Duracao</code>, <code>FormaPagamento</code></td></tr>
+  <tr><td>Cadastrar, Consultar, Selecionar assentos</td><td><span class="path">CinemaApp/Cadastros/</span>, <span class="path">SelecaoAssentosForm.cs</span></td></tr>
+</table>
+
+<h3>2.2 Entidades (Entities) — Evans, cap. 5</h3>
+<p>Uma Entidade, em DDD, é o objeto definido pela sua <strong>identidade</strong>, e não pelos seus atributos. O projeto materializa esse conceito numa classe base abstrata:</p>
+<pre>// CinemaDomain/Base/BaseEntity.cs
+public abstract class BaseEntity : IBaseEntity
+{
+    public int Id { get; set; }
+}</pre>
+<p>Toda classe de domínio herda de <code>BaseEntity</code> (<code>public class Filme : BaseEntity</code>), ou seja, toda classe de domínio possui identidade própria — é modelada como Entidade. A interface vazia <span class="path">CinemaDomain/Base/IBaseEntity.cs</span> funciona como <em>marker interface</em>: ela não traz comportamento, serve para restringir os genéricos das camadas superiores (ver §4) apenas a tipos que sejam efetivamente do domínio.</p>
+
+<h3>2.3 Agregados e Raiz de Agregado (Aggregates) — Evans, cap. 6</h3>
+<p>O agregado é um conjunto de objetos tratado como uma unidade de consistência, acessado por uma única raiz. O caso mais claro no projeto é o <strong>Ingresso</strong>:</p>
+<pre>// CinemaDomain/Ingresso.cs
+public class Ingresso : BaseEntity
+{
+    public string Documento { get; set; }
+    public DateTime DataCompra { get; set; }
+    public List&lt;IngressoItem&gt; IngressoItens { get; set; }   // filhos do agregado
+    public Sessao Sessao { get; set; }                       // referência a outro agregado
+    public decimal ValorTotal { get; set; }
+    public string FormaPagamento { get; set; }
+}</pre>
+<ul>
+  <li><strong>Raiz:</strong> <code>Ingresso</code>. Os <code>IngressoItem</code> (os assentos comprados) só existem dentro de um ingresso e são acessados através dele.</li>
+  <li><strong>Fronteira do agregado:</strong> confirmada em <span class="path">CinemaApp/Infra/ConfigureDI.cs</span>, onde há repositório e serviço registrados para <code>Ingresso</code> mas <strong>não</strong> para <code>IngressoItem</code>. Isso é exatamente a regra de Evans: só a raiz do agregado tem repositório próprio.</li>
+  <li><strong>Referência entre agregados por identidade:</strong> <code>Ingresso</code> aponta para <code>Sessao</code>, que é raiz de outro agregado, e não tenta controlar seu ciclo de vida.</li>
+</ul>
+<p>O mesmo raciocínio vale para <code>Filme</code> → <code>Genero</code> e <code>Sessao</code> → <code>Filme</code>/<code>Sala</code>: agregados distintos que se referenciam.</p>
+
+<h3>2.4 Padrão Repository — Evans, cap. 6</h3>
+<p>Evans propõe o Repository como a abstração que entrega objetos de domínio à aplicação “como se fossem uma coleção em memória”, escondendo completamente a tecnologia de persistência. A interface do projeto é a tradução direta disso:</p>
+<pre>// CinemaRepository/Base/IBaseRepository.cs
+public interface IBaseRepository&lt;TypeEntity&gt; where TypeEntity : IBaseEntity
+{
+    void Create(TypeEntity entity);
+    TypeEntity ReadById(int id);
+    IList&lt;TypeEntity&gt; ReadAll();
+    void Update(TypeEntity entity);
+    void Delete(int id);
+}</pre>
+<p>Note que a <strong>interface</strong> não menciona EF Core, SQL ou PostgreSQL — ela devolve <code>IList&lt;TypeEntity&gt;</code>, uma coleção comum. Toda a tecnologia fica confinada na implementação <span class="path">CinemaRepository/Base/BaseRepository.cs</span>. Consequência prática: trocar PostgreSQL por SQL Server, ou o EF Core por Dapper, não exige alterar uma linha de <code>CinemaDomain</code> nem de <code>CinemaService</code>.</p>
+
+<h3>2.5 Services (Camada de Aplicação) — Evans, cap. 4 e 5</h3>
+<p>Operações que não pertencem naturalmente a nenhuma entidade ficam em Services. Em <span class="path">CinemaService/Base/BaseService.cs</span>, o serviço <strong>orquestra</strong> o caso de uso sem conter regra de negócio própria: ele valida, delega a persistência ao repositório e converte o resultado para o modelo de saída.</p>
+<pre>public TypeOutputModel Create&lt;TypeInputModel, TypeOutputModel, TypeValidator&gt;(TypeEntity entity) ...
+{
+    Validate(entity, Activator.CreateInstance&lt;TypeValidator&gt;());  // 1. invariantes
+    _baseRepository.Create(entity);                                // 2. persistência
+    return _mapper.Map&lt;TypeOutputModel&gt;(entity);                   // 3. tradução p/ fora
+}</pre>
+
+<h3>2.6 Invariantes do domínio (validação)</h3>
+<p>As regras que um objeto precisa sempre respeitar estão centralizadas em <span class="path">CinemaService/Validators/</span> (FluentValidation), um por entidade: <code>FilmeValidator</code>, <code>GeneroValidator</code>, <code>SalaValidator</code>, <code>SessaoValidator</code>, <code>IngressoValidator</code>, <code>IngressoItemValidator</code>. Exemplo em <span class="path">FilmeValidator.cs</span>: nome obrigatório entre 5 e 50 caracteres, gênero não nulo, duração ≥ 1. Como a validação é disparada dentro do <code>BaseService</code>, <strong>nenhum</strong> caminho da aplicação consegue gravar um objeto inválido — nem a tela, nem os testes.</p>
+
+<h3>2.7 DTOs / ViewModels e a separação de camadas</h3>
+<p>A pasta <span class="path">CinemaApp/Models/</span> (<code>FilmeViewModel</code>, <code>GeneroViewModel</code>, <code>SalaViewModel</code>, <code>SessaoViewModel</code>, <code>IngressoViewModel</code>, <code>IngressoItemViewModel</code>) implementa o que o artigo da DevMedia chama de objetos de transporte entre a camada de aplicação e a de apresentação. Eles achatam o grafo de objetos para o que a tela precisa:</p>
+<pre>// CinemaApp/Models/FilmeViewModel.cs  — note GeneroId/GeneroNome em vez do objeto Genero
+public class FilmeViewModel {
+    public int Id; public string Nome; public string Classificacao;
+    public int GeneroId; public string GeneroNome; public int Duracao;
+}</pre>
+<p>A conversão Entidade ↔ ViewModel é configurada com AutoMapper em <span class="path">CinemaApp/Infra/ConfigureDI.cs</span>, inclusive com projeções explícitas (<code>ForMember(dest =&gt; dest.GeneroNome, opt =&gt; opt.MapFrom(src =&gt; src.Genero.Nome))</code>). Resultado: o <code>DataGridView</code> da interface nunca enxerga uma entidade de domínio diretamente.</p>
+
+<h3>2.8 Resumo do mapeamento DDD</h3>
+<table>
+  <tr><th style="width:34%">Conceito de DDD</th><th>Arquivo / pasta do projeto</th></tr>
+  <tr><td>Layered Architecture</td><td>Os 5 projetos da solução <code>Cinema.slnx</code></td></tr>
+  <tr><td>Domain Layer (isolado)</td><td><span class="path">CinemaDomain/</span> — sem <code>ProjectReference</code> para outras camadas</td></tr>
+  <tr><td>Entity / identidade</td><td><span class="path">CinemaDomain/Base/BaseEntity.cs</span>, <span class="path">IBaseEntity.cs</span></td></tr>
+  <tr><td>Aggregate Root</td><td><code>Ingresso</code> + <code>IngressoItem</code>; <code>Sessao</code> + <code>Filme</code>/<code>Sala</code></td></tr>
+  <tr><td>Repository</td><td><span class="path">CinemaRepository/Base/IBaseRepository.cs</span> e <span class="path">BaseRepository.cs</span></td></tr>
+  <tr><td>Application Service</td><td><span class="path">CinemaService/Base/IBaseService.cs</span> e <span class="path">BaseService.cs</span></td></tr>
+  <tr><td>Invariantes do modelo</td><td><span class="path">CinemaService/Validators/</span></td></tr>
+  <tr><td>UI Layer + DTO</td><td><span class="path">CinemaApp/Cadastros/</span>, <span class="path">CinemaApp/Models/</span></td></tr>
+  <tr><td>Diagrama do modelo</td><td><span class="path">CinemaDomain/Diagrama/CinemaClassDiagram.cd</span></td></tr>
+</table>
+
+<h1>3. Tema: ORM e Entity Framework Core</h1>
+<p class="ref">Referências: Medium / We Are Developers — “Understanding ORM in C#/.NET: A Complete Guide”; entityframeworktutorial.net.</p>
+
+<h3>3.1 O problema que o ORM resolve neste projeto</h3>
+<p>O artigo do Medium define ORM como a ponte entre o modelo de objetos e o modelo relacional, eliminando o código ADO.NET repetitivo. No ProjetoCinema a existência dessa ponte é visível pelo que <strong>não</strong> existe: não há nenhuma linha de <code>SqlCommand</code>, <code>DataReader</code> ou SQL manual no código da aplicação. O SQL aparece apenas em <span class="path">CinemaTest/CinemaDB.sql</span> (script auxiliar) e dentro das migrations geradas automaticamente.</p>
+<p>Pacotes que fazem o ORM (lidos dos <code>.csproj</code>): <code>Microsoft.EntityFrameworkCore 10.0.12</code> e o provider <code>Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3</code>.</p>
+
+<h3>3.2 DbContext — a Unit of Work / Session do ORM</h3>
+<pre>// CinemaRepository/Context/MyDBContext.cs
+public class MyDBContext : DbContext
+{
+    public DbSet&lt;Genero&gt; Genero { get; set; }
+    public DbSet&lt;Filme&gt; Filme { get; set; }
+    public DbSet&lt;Sala&gt; Sala { get; set; }
+    public DbSet&lt;Sessao&gt; Sessao { get; set; }
+    public DbSet&lt;Ingresso&gt; Ingresso { get; set; }
+    public DbSet&lt;IngressoItem&gt; IngressoItem { get; set; }
+
+    public MyDBContext(DbContextOptions&lt;MyDBContext&gt; options) : base(options) { ... }
+}</pre>
+<table>
+  <tr><th style="width:34%">Conceito de EF Core</th><th>Onde está no projeto</th></tr>
+  <tr><td><code>DbContext</code> (Unit of Work)</td><td><span class="path">CinemaRepository/Context/MyDBContext.cs</span></td></tr>
+  <tr><td><code>DbSet&lt;T&gt;</code> (coleção mapeada = tabela)</td><td>As 6 propriedades <code>DbSet</code> acima</td></tr>
+  <tr><td>Construtor com <code>DbContextOptions</code></td><td>Permite que a connection string venha por DI, não embutida na classe</td></tr>
+  <tr><td><code>Database.EnsureCreated()</code></td><td>Criação automática do schema na primeira execução</td></tr>
+  <tr><td>Acesso genérico ao <code>DbSet</code></td><td><code>_myDBContext.Set&lt;TypeEntity&gt;()</code> em <span class="path">BaseRepository.cs</span></td></tr>
+</table>
+
+<h3>3.3 Fluent API — configuração do mapeamento objeto↔tabela</h3>
+<p>O tutorial de EF apresenta três formas de configurar o modelo: convenções, Data Annotations e Fluent API. O projeto escolheu deliberadamente a <strong>Fluent API com classes de configuração separadas</strong> (<code>IEntityTypeConfiguration&lt;T&gt;</code>), mantendo as entidades de domínio limpas de atributos de persistência — o que é também uma exigência do DDD (§2.2).</p>
+<pre>// CinemaRepository/Mapping/FilmeMap.cs
+public class FilmeMap : IEntityTypeConfiguration&lt;Filme&gt;
+{
+    public void Configure(EntityTypeBuilder&lt;Filme&gt; builder)
+    {
+        builder.ToTable("Filme");                      // nome da tabela
+        builder.HasKey(x =&gt; x.Id);                     // chave primária
+        builder.Property(x =&gt; x.Nome)
+               .IsRequired(true).HasMaxLength(50);     // NOT NULL / varchar(50)
+        builder.Property(x =&gt; x.Classificacao)
+               .IsRequired(false).HasMaxLength(20);
+        builder.HasOne(x =&gt; x.Genero)                  // relacionamento 1:N
+               .WithMany().IsRequired(true);
+        builder.Property(x =&gt; x.Duracao)
+               .HasDefaultValue(120);                  // valor padrão
+    }
+}</pre>
+<p>Há uma classe de mapeamento por entidade em <span class="path">CinemaRepository/Mapping/</span> (<code>GeneroMap</code>, <code>FilmeMap</code>, <code>SalaMap</code>, <code>SessaoMap</code>, <code>IngressoMap</code>, <code>IngressoItemMap</code>), todas registradas em <code>OnModelCreating</code>:</p>
+<pre>protected override void OnModelCreating(ModelBuilder modelBuilder) {
+    modelBuilder.Entity&lt;Filme&gt;(new FilmeMap().Configure);
+    modelBuilder.Entity&lt;Sessao&gt;(new SessaoMap().Configure);
+    ...
+}</pre>
+<table>
+  <tr><th style="width:34%">Recurso da Fluent API</th><th>Método usado nos arquivos <code>*Map.cs</code></th></tr>
+  <tr><td>Nome da tabela</td><td><code>ToTable("Filme")</code></td></tr>
+  <tr><td>Chave primária</td><td><code>HasKey(x =&gt; x.Id)</code></td></tr>
+  <tr><td>Obrigatoriedade / tamanho</td><td><code>IsRequired()</code>, <code>HasMaxLength()</code></td></tr>
+  <tr><td>Valor padrão</td><td><code>HasDefaultValue(120)</code></td></tr>
+  <tr><td>Relacionamento um-para-muitos</td><td><code>HasOne(...).WithMany()</code></td></tr>
+</table>
+
+<h3>3.4 Change Tracking e estados da entidade</h3>
+<p>O ponto do tutorial de EF sobre rastreamento de mudanças está explícito no método <code>Update</code> de <span class="path">CinemaRepository/Base/BaseRepository.cs</span>, que trata o caso clássico de entidade <em>desanexada</em> (vinda da tela) conflitando com uma instância já rastreada:</p>
+<pre>var localEntity = _myDBContext.Set&lt;TypeEntity&gt;().Local
+                  .FirstOrDefault(e =&gt; e.Id == entity.Id);
+if (localEntity is not null) {
+    _myDBContext.Entry(localEntity).CurrentValues.SetValues(entity);
+    _myDBContext.Entry(localEntity).State = EntityState.Modified;
+} else {
+    _myDBContext.Entry(entity).State = EntityState.Modified;
+}
+_myDBContext.SaveChanges();</pre>
+<ul>
+  <li><code>.Local</code> — consulta o <em>change tracker</em> sem ir ao banco;</li>
+  <li><code>CurrentValues.SetValues()</code> — copia valores para a instância rastreada;</li>
+  <li><code>EntityState.Modified</code> — marca a entidade como alterada;</li>
+  <li><code>SaveChanges()</code> — traduz tudo para <code>UPDATE</code> em uma transação.</li>
+</ul>
+<p>Os demais métodos ilustram o ciclo completo: <code>Add</code> (Added), <code>Remove</code> (Deleted) e <code>Set&lt;T&gt;().AsQueryable()</code> para leitura via LINQ.</p>
+
+<h3>3.5 Migrations</h3>
+<table>
+  <tr><th style="width:40%">Arquivo</th><th>Conceito</th></tr>
+  <tr><td><span class="path">CinemaTest/Migrations/20261001134153_Inicial.cs</span></td><td>Migration inicial: <code>Up</code>/<code>Down</code> criando as tabelas</td></tr>
+  <tr><td><span class="path">..._Inicial.Designer.cs</span></td><td>Snapshot do modelo no momento da migration</td></tr>
+  <tr><td><span class="path">CinemaTest/Migrations/MyDBContextModelSnapshot.cs</span></td><td>Estado corrente do modelo, usado para calcular o próximo diff</td></tr>
+  <tr><td><code>Microsoft.EntityFrameworkCore.Design</code> no <code>.csproj</code> de CinemaTest</td><td>Pacote que habilita as ferramentas <code>dotnet ef</code></td></tr>
+</table>
+
+<h1>4. Tema: Tipos Genéricos em C#</h1>
+<p class="ref">Referência: NextWave Education — “Trabalhando com tipos genéricos em C#”.</p>
+<p>Este é, provavelmente, o tema mais fortemente explorado no projeto: a genericidade é o que evita escrever cinco repositórios e cinco serviços praticamente idênticos.</p>
+
+<h3>4.1 Classe genérica + restrição de tipo (<code>where</code>)</h3>
+<pre>// CinemaRepository/Base/BaseRepository.cs
+public class BaseRepository&lt;TypeEntity&gt; : IBaseRepository&lt;TypeEntity&gt;
+    where TypeEntity : BaseEntity        // restrição de classe base</pre>
+<p>A restrição <code>where TypeEntity : BaseEntity</code> é o que torna o código <strong>possível</strong>: sem ela, a linha <code>dbContext.ToList().Find(x =&gt; x.Id == id)</code> não compilaria, porque o compilador não saberia que <code>TypeEntity</code> tem a propriedade <code>Id</code>. É o exemplo didático perfeito de por que restrições existem.</p>
+<p>Note a diferença sutil e intencional entre interface e implementação:</p>
+<table>
+  <tr><th style="width:46%">Declaração</th><th>Restrição</th></tr>
+  <tr><td><code>IBaseRepository&lt;TypeEntity&gt;</code></td><td><code>where TypeEntity : IBaseEntity</code> (contrato mais permissivo)</td></tr>
+  <tr><td><code>BaseRepository&lt;TypeEntity&gt;</code></td><td><code>where TypeEntity : BaseEntity</code> (precisa do <code>Id</code> concreto)</td></tr>
+  <tr><td><code>IBaseService&lt;TypeEntity&gt;</code> / <code>BaseService&lt;TypeEntity&gt;</code></td><td><code>where TypeEntity : IBaseEntity</code></td></tr>
+</table>
+
+<h3>4.2 Métodos genéricos com múltiplos parâmetros de tipo</h3>
+<p>O caso mais avançado do projeto está em <span class="path">CinemaService/Base/IBaseService.cs</span>: um método genérico, dentro de uma classe genérica, com três parâmetros de tipo e uma restrição diferente para cada um.</p>
+<pre>TypeOutputModel Create&lt;TypeInputModel, TypeOutputModel, TypeValidator&gt;(TypeEntity entity)
+    where TypeInputModel  : class
+    where TypeOutputModel : class
+    where TypeValidator   : AbstractValidator&lt;TypeEntity&gt;;</pre>
+<ul>
+  <li><code>TypeInputModel</code> / <code>TypeOutputModel</code> — restrição <code>class</code> (tipo de referência): permitem que o mesmo serviço aceite e devolva DTOs diferentes conforme o caso de uso.</li>
+  <li><code>TypeValidator</code> — restrição de <strong>tipo genérico aberto aninhado</strong> (<code>AbstractValidator&lt;TypeEntity&gt;</code>): o compilador garante, em tempo de compilação, que só se pode passar um validador <em>da entidade correta</em>. Tentar <code>_filmeService.Create&lt;..., GeneroValidator&gt;(filme)</code> nem compila.</li>
+</ul>
+<p>Uso real em <span class="path">CinemaApp/Cadastros/CadastroFilme.cs</span>:</p>
+<pre>_filmeService.Create&lt;Filme, Filme, FilmeValidator&gt;(filme);
+_filmeService.Update&lt;Filme, Filme, FilmeValidator&gt;(filme);
+var filme = _filmeService.ReadById&lt;Filme&gt;(id);
+_generoService.ReadAll&lt;GeneroViewModel&gt;().ToList();</pre>
+<p>A última linha mostra o ganho concreto da parametrização da saída: o <strong>mesmo</strong> método genérico devolve a entidade (<code>Filme</code>) quando a tela precisa editar, e a ViewModel (<code>GeneroViewModel</code>) quando precisa popular um ComboBox.</p>
+
+<h3>4.3 Instanciação dinâmica de um tipo genérico</h3>
+<pre>// CinemaService/Base/BaseService.cs
+Validate(entity, Activator.CreateInstance&lt;TypeValidator&gt;());</pre>
+<p><code>Activator.CreateInstance&lt;T&gt;()</code> cria o validador em tempo de execução a partir do parâmetro de tipo — a alternativa a isso seria a restrição <code>where TypeValidator : new()</code>, mencionada no material de genéricos.</p>
+
+<h3>4.4 Genéricos da BCL e genéricos nos demais arquivos</h3>
+<table>
+  <tr><th style="width:34%">Construção genérica</th><th>Arquivo</th></tr>
+  <tr><td><code>DbSet&lt;Filme&gt;</code>, <code>DbContextOptions&lt;MyDBContext&gt;</code>, <code>Set&lt;TypeEntity&gt;()</code></td><td><span class="path">CinemaRepository/Context/MyDBContext.cs</span>, <span class="path">BaseRepository.cs</span></td></tr>
+  <tr><td><code>IEntityTypeConfiguration&lt;Filme&gt;</code>, <code>EntityTypeBuilder&lt;Filme&gt;</code></td><td><span class="path">CinemaRepository/Mapping/*Map.cs</span></td></tr>
+  <tr><td><code>AbstractValidator&lt;Filme&gt;</code>, <code>RuleFor&lt;...&gt;</code></td><td><span class="path">CinemaService/Validators/*.cs</span></td></tr>
+  <tr><td><code>List&lt;IngressoItem&gt;</code></td><td><span class="path">CinemaDomain/Ingresso.cs</span></td></tr>
+  <tr><td><code>IList&lt;TypeEntity&gt;</code>, <code>IEnumerable&lt;TypeOutputModel&gt;</code></td><td>Interfaces de repositório e serviço</td></tr>
+  <tr><td><code>List&lt;FilmeViewModel&gt;</code>, <code>IMapper.Map&lt;T&gt;()</code></td><td><span class="path">CinemaApp/Cadastros/*.cs</span></td></tr>
+  <tr><td><code>AddScoped&lt;TService, TImpl&gt;()</code>, <code>GetService&lt;T&gt;()</code></td><td><span class="path">CinemaApp/Infra/ConfigureDI.cs</span>, <span class="path">CinemaTest/*.cs</span></td></tr>
+</table>
+
+<h3>4.5 Herança + polimorfismo como complemento aos genéricos</h3>
+<p>Onde o genérico não resolve (o layout de cada tela é diferente), o projeto usa herança com métodos virtuais em <span class="path">CinemaApp/Base/CadastroBase.cs</span>: <code>CarregaGrid()</code>, <code>Salvar()</code>, <code>Novo()</code>, <code>Editar()</code>, <code>Deletar(int)</code> e <code>CarregarRegistro(DataGridViewRow)</code> são <code>protected virtual</code> e sobrescritos em cada <code>Cadastro*</code>. É o padrão <em>Template Method</em>: a classe base concentra o fluxo comum (confirmação de exclusão, limpeza de campos, troca de aba) e delega o específico às subclasses.</p>
+
+<h1>5. Tema: Injeção de Dependência em .NET</h1>
+<p class="ref">Referências: Microsoft Learn — “Injeção de dependência em .NET” (dotnet/core/extensions/dependency-injection/overview); Adriano Programador (Medium) — “.NET: Injeção de Dependência”.</p>
+
+<h3>5.1 O contêiner e sua composição</h3>
+<p>Toda a configuração de DI está concentrada em um único arquivo, <span class="path">CinemaApp/Infra/ConfigureDI.cs</span>, que é a <em>Composition Root</em> da aplicação — o único lugar que conhece as implementações concretas. É chamado na primeira linha útil de <span class="path">CinemaApp/Program.cs</span>:</p>
+<pre>static void Main() {
+    ConfigureDI.Configure();              // monta o contêiner
+    ApplicationConfiguration.Initialize();
+    Application.Run(new FormPrincipal());
+}</pre>
+<pre>// ConfigureDI.cs — padrão descrito na documentação da Microsoft
+Services = new ServiceCollection();       // 1. coleção de descritores
+Services.AddDbContext&lt;MyDBContext&gt;(o =&gt; o.UseNpgsql(strCon));
+Services.AddScoped&lt;IBaseRepository&lt;Filme&gt;, BaseRepository&lt;Filme&gt;&gt;();
+...
+ServiceProvider = Services.BuildServiceProvider();   // 2. provider</pre>
+<p>Pacote: <code>Microsoft.Extensions.DependencyInjection 10.0.13</code>. Vale registrar que o uso é notável por ser num <strong>Windows Forms</strong>: a infraestrutura de DI do .NET, normalmente associada a ASP.NET Core, é aqui montada manualmente em uma aplicação desktop.</p>
+
+<h3>5.2 Ciclos de vida (service lifetimes)</h3>
+<p>Os três tempos de vida descritos pela Microsoft estão todos presentes, e cada escolha tem justificativa:</p>
+<table>
+  <tr><th style="width:16%">Lifetime</th><th style="width:38%">Registros no projeto</th><th>Por quê</th></tr>
+  <tr><td><code>Scoped</code></td><td><code>IBaseRepository&lt;T&gt;</code> e <code>IBaseService&lt;T&gt;</code> de Genero, Filme, Sala, Sessao, Ingresso; o <code>MyDBContext</code> via <code>AddDbContext</code></td><td>Acompanham o tempo de vida do <code>DbContext</code>, que não é thread-safe nem deve viver por toda a aplicação</td></tr>
+  <tr><td><code>Singleton</code></td><td><code>Services.AddSingleton(mapperConfig.CreateMapper())</code></td><td>O <code>IMapper</code> do AutoMapper é imutável e caro de construir — uma instância basta</td></tr>
+  <tr><td><code>Transient</code></td><td><code>AddTransient&lt;CadastroGenero&gt;()</code>, <code>CadastroFilme</code>, <code>CadastroSala</code>, <code>CadastroSessao</code>, <code>CadastroIngresso</code></td><td>Cada abertura de formulário precisa de uma instância nova (um Form fechado não pode ser reaberto)</td></tr>
+</table>
+
+<h3>5.3 Injeção por construtor</h3>
+<p>Nenhuma classe do projeto instancia suas próprias dependências com <code>new</code>; todas as recebem pelo construtor, que é a forma recomendada na documentação da Microsoft.</p>
+<pre>// CinemaApp/Cadastros/CadastroFilme.cs
+private readonly IBaseService&lt;Filme&gt; _filmeService;
+private readonly IBaseService&lt;Genero&gt; _generoService;
+
+public CadastroFilme(IBaseService&lt;Filme&gt; filmeService, IBaseService&lt;Genero&gt; generoService)
+{
+    _filmeService = filmeService;
+    _generoService = generoService;
+    InitializeComponent();
+}</pre>
+<p>A cadeia completa que o contêiner resolve automaticamente ao pedir um <code>CadastroFilme</code>:</p>
+<div class="box">
+<code>CadastroFilme</code> ← <code>IBaseService&lt;Filme&gt;</code> ← <code>IBaseRepository&lt;Filme&gt;</code> + <code>IMapper</code> ← <code>MyDBContext</code> ← <code>DbContextOptions</code> (connection string de <span class="path">CinemaApp/Config/ConfigDB.txt</span>)
+</div>
+<p>Os campos <code>readonly</code> e a dependência declarada como <strong>interface</strong> (<code>IBaseService&lt;T&gt;</code>, não <code>BaseService&lt;T&gt;</code>) são exatamente o que o artigo do Medium chama de inversão de dependência: a tela depende de um contrato, não de uma implementação.</p>
+
+<h3>5.4 Resolução de serviços e o Service Locator</h3>
+<p>O <code>ServiceProvider</code> exposto estaticamente por <code>ConfigureDI</code> é usado pelo <span class="path">CinemaApp/FormPrincipal.cs</span> para obter os formulários do menu (<code>GetService&lt;CadastroFilme&gt;()</code>). Esse é o ponto de entrada necessário em Windows Forms, onde não existe um host que resolva a raiz automaticamente — vale notar, como observação crítica, que resolver serviços pelo provider é o padrão <em>Service Locator</em>, aceitável na Composition Root mas que, se espalhado pelo código, anularia o benefício da injeção por construtor.</p>
+
+<h3>5.5 DI nos testes</h3>
+<p>Em <span class="path">CinemaTest/TestCinemaService.cs</span> o contêiner é remontado de forma isolada, com connection string própria e apenas os registros necessários:</p>
+<pre>services = new ServiceCollection();
+services.AddDbContext&lt;MyDBContext&gt;(o =&gt; o.UseNpgsql(conStr));
+services.AddScoped&lt;IBaseRepository&lt;Genero&gt;, BaseRepository&lt;Genero&gt;&gt;();
+services.AddScoped&lt;IBaseService&lt;Genero&gt;, BaseService&lt;Genero&gt;&gt;();
+services.AddSingleton(new MapperConfiguration(...).CreateMapper());
+var generoService = serviceProvider.GetService&lt;IBaseService&lt;Genero&gt;&gt;();</pre>
+<p>Isso evidencia o principal benefício prático apontado nas duas referências de DI: como as camadas dependem de interfaces, é possível compor um grafo de objetos diferente para teste sem alterar o código de produção. Os arquivos <span class="path">TestCinemaDomain.cs</span> e <span class="path">TestCinemaRepository.cs</span> fazem o mesmo para as camadas inferiores.</p>
+
+<h1>6. Quadro-síntese: pasta → tema</h1>
+<table>
+  <tr><th style="width:30%">Caminho no projeto</th><th>Temas de referência evidenciados</th></tr>
+  <tr><td><span class="path">CinemaDomain/Base/</span></td><td><span class="tag">DDD</span> Entity, identidade, marker interface</td></tr>
+  <tr><td><span class="path">CinemaDomain/*.cs</span></td><td><span class="tag">DDD</span> Modelo de domínio, Agregados, Linguagem Ubíqua</td></tr>
+  <tr><td><span class="path">CinemaRepository/Base/</span></td><td><span class="tag">DDD</span> Repository <span class="tag">Genéricos</span> classe genérica + <code>where</code> <span class="tag">ORM</span> change tracking</td></tr>
+  <tr><td><span class="path">CinemaRepository/Context/</span></td><td><span class="tag">ORM/EF</span> DbContext, DbSet, Unit of Work, provider Npgsql</td></tr>
+  <tr><td><span class="path">CinemaRepository/Mapping/</span></td><td><span class="tag">ORM/EF</span> Fluent API, <code>IEntityTypeConfiguration&lt;T&gt;</code>, relacionamentos</td></tr>
+  <tr><td><span class="path">CinemaService/Base/</span></td><td><span class="tag">DDD</span> Application Service <span class="tag">Genéricos</span> métodos genéricos multi-parâmetro <span class="tag">DI</span> injeção por construtor</td></tr>
+  <tr><td><span class="path">CinemaService/Validators/</span></td><td><span class="tag">DDD</span> invariantes <span class="tag">Genéricos</span> <code>AbstractValidator&lt;T&gt;</code></td></tr>
+  <tr><td><span class="path">CinemaApp/Infra/</span></td><td><span class="tag">DI</span> Composition Root, lifetimes, AutoMapper</td></tr>
+  <tr><td><span class="path">CinemaApp/Models/</span></td><td><span class="tag">DDD</span> DTO / ViewModel, separação de camadas</td></tr>
+  <tr><td><span class="path">CinemaApp/Base/</span>, <span class="path">Cadastros/</span></td><td><span class="tag">DDD</span> UI Layer <span class="tag">DI</span> dependências por construtor + herança/Template Method</td></tr>
+  <tr><td><span class="path">CinemaTest/Migrations/</span></td><td><span class="tag">ORM/EF</span> Migrations, ModelSnapshot, <code>dotnet ef</code></td></tr>
+  <tr><td><span class="path">CinemaTest/Test*.cs</span></td><td><span class="tag">DI</span> contêiner isolado para testes <span class="tag">Genéricos</span> <code>GetService&lt;T&gt;()</code></td></tr>
+</table>
+
+<h1>7. Referências</h1>
+<ol style="font-size:9.5pt;">
+  <li>DEVMEDIA. <em>Introdução ao DDD em .NET</em>. Disponível em: devmedia.com.br/introducao-ao-ddd-em-net/32724</li>
+  <li>EVANS, Eric. <em>Domain-Driven Design: Tackling Complexity in the Heart of Software</em>. Addison-Wesley, 2003. Disponível em: fabiofumarola.github.io/nosql/readingMaterial/Evans03.pdf</li>
+  <li>WE ARE DEVELOPERS. <em>Understanding ORM in C#/.NET: A Complete Guide</em>. Medium.</li>
+  <li>ENTITY FRAMEWORK TUTORIAL. Disponível em: entityframeworktutorial.net</li>
+  <li>NEXTWAVE EDUCATION. <em>Trabalhando com tipos genéricos em C#</em>. Disponível em: nextwave.education/trabalhando-com-tipos-genericos-em-c/</li>
+  <li>MICROSOFT LEARN. <em>Injeção de dependência em .NET</em>. Disponível em: learn.microsoft.com/pt-br/dotnet/core/extensions/dependency-injection/overview</li>
+  <li>ADRIANO, Programador. <em>.NET: Injeção de Dependência</em>. Medium.</li>
+</ol>
+
+<footer>ProjetoCinema — Mapeamento entre o código-fonte e os temas das referências</footer>
+</body>
+</html>

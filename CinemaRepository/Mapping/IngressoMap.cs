@@ -1,0 +1,20 @@
+﻿using CinemaDomain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace CinemaRepository.Mapping
+{
+    public class IngressoMap : IEntityTypeConfiguration<Ingresso>
+    {
+        public void Configure(EntityTypeBuilder<Ingresso> builder)
+        {
+            builder.ToTable("Ingresso");
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.DataCompra);
+            builder.HasOne(x => x.Sessao);
+            builder.Property(x => x.ValorTotal);
+            builder.Property(x => x.FormaPagamento).HasMaxLength(100);
+            builder.HasMany(x => x.IngressoItens).WithOne(x => x.Ingresso).OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+}
